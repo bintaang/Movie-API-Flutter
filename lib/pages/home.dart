@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_app_flutter/models/movies.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,7 +12,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<dynamic> movies = [];
+  List<Movies> movies = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -21,7 +22,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0C0950),
+      backgroundColor: Colors.black38,
       appBar: AppBar(
         title: Text("Movie App",
           style: TextStyle(
@@ -32,32 +33,67 @@ class _HomeState extends State<Home> {
           ),
         foregroundColor: Colors.white,
         centerTitle: true,
-        backgroundColor: Color(0xFF0C0950),
+        backgroundColor: Colors.black38,
       ),
-      body: ListView(
-            scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                    width: 200.00,
-                    height: 300.00,
-                    margin: EdgeInsets.all(10.00),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.00),
-                    ),
-                    child: 
-                    Image(image: NetworkImage('https://assets-global.website-files.com/6009ec8cda7f305645c9d91b/6408f6e7b5811271dc883aa8_batman-min.png'),
-                      fit: BoxFit.fitWidth,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.all(10.0)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(padding: EdgeInsets.all(10.0)),
+                Text(
+                  "Popular Movies",
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                Padding(padding: EdgeInsets.all(10.0)),
+              ],
+            ),
+            SizedBox(height: 20.0),
+            Expanded(
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: movies.length,
+                itemBuilder: (context, index) {
+                  Padding(padding: EdgeInsets.all(10.0));
+                  final movie = movies[index];
+                  final tittle = movie.title;
+                  final posterPath = movie.posterPath;
+                  final imageUrl = 'https://image.tmdb.org/t/p/w500$posterPath,';
+                  final rating = movie.rating;
+                  final overview = movie.overview ?? 'No Overview';
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: [
+                              Container(
+                                width: 150,
+                                height: 250,
+                                margin: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  image: DecorationImage(
+                                    image: NetworkImage(imageUrl),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
 
-                    )
-                    ,
-                  )
-                ],
-              )
-            ],
-          )
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        )
     );
   }
   Future<void> fetchData() async {
@@ -67,9 +103,17 @@ class _HomeState extends State<Home> {
     final response = await http.get(uri, headers: {'Authorization' : bearerToken});
     final body = response.body;
     final json = jsonDecode(body);
-    movies = json['results'];
+    final results = json['results'] as List<dynamic>;
+    final transform = results.map((e) {
+      return Movies(
+        posterPath: e['poster_path'] ?? '',
+        title: e['title'] ?? 'No Title',
+        rating: e['vote_average']?.toString() ?? 'No Rating',
+        overview: e['overview'] ?? 'No Overview',
+      );
+    }).toList();
     setState(() {
-      movies = movies;
+      movies = transform;
     });
     print(movies);
     print("Data Fetched");
