@@ -1,32 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app_flutter/models/movies.dart';
 
-class FilmDetail extends StatefulWidget {
-  const FilmDetail({super.key});
+class FilmDetail extends StatelessWidget {
+  const FilmDetail({super.key, required this.movies});
 
-  @override
-  State<FilmDetail> createState() => _FilmDetailState();
-}
-
-class _FilmDetailState extends State<FilmDetail> {
-
-
+  final Movies movies;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo[900],
       appBar: AppBar(
-        title: Text("Film Detail"),
-        backgroundColor: Colors.indigo[900],
+        title: Text(movies.title),
         centerTitle: true,
-        titleTextStyle:
-        TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-      ),
-        iconTheme:
-        IconThemeData(
-          color: Colors.white, // Change the color of the back button
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () { Navigator.pop(context); },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
         ),
       ),
     );
