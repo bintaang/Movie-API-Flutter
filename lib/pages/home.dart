@@ -1,7 +1,10 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_app_flutter/services/movie_api.dart';
-import '../models/movies.dart';
+import 'package:movie_app_flutter/widgets/carouselImage.dart';
 
+import '../models/movies.dart';
+import '../widgets/film_card.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,7 +14,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Movies> movies = [];
+  List<Movies> moviesPopular = [];
+  List<Movies> moviesRegion = [];
 
   @override
   void initState() {
@@ -22,96 +26,134 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF0F2027), // #0F2027
+            Color(0xFF203A43), // #203A43
+            Color(0xFF16232D), // #2C5364
+          ],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text("Movie App",
+          title: Text(
+            "Movie App",
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
           foregroundColor: Colors.white,
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.all(10.0)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(padding: EdgeInsets.all(10.0)),
-                Text(
-                  "Popular Movies",
-                  style: TextStyle(fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(padding: EdgeInsets.all(10.0)),
+              CarouselSlider.builder(
+                itemCount: moviesPopular.length,
+                options: CarouselOptions(
+                  height: 650,
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
                 ),
-                Padding(padding: EdgeInsets.all(10.0)),
-              ],
-            ),
-            SizedBox(height: 20.0),
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  Padding(padding: EdgeInsets.all(10.0));
-                  final movie = movies[index];
-                  final posterPath = movie.posterPath;
-                  final imageUrl = 'https://image.tmdb.org/t/p/w500$posterPath,';
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap : () {
-                                  Navigator.of(context).pushNamed(
-                                      '/filmDetail',
-                                    arguments: movie
-                                  );
-
-                                },
-                                child: Container(
-                                  width: 150,
-                                  height: 250,
-                                  margin: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    image: DecorationImage(
-                                
-                                      image: NetworkImage(imageUrl),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                        ],
-                      ),
-                    ],
+                itemBuilder: (BuildContext context, int index, int realIndex) {
+                  final movie = moviesPopular[index];
+                  final imagePath = movie.posterPath;
+                  final imageUrl = 'https://image.tmdb.org/t/p/w500$imagePath,';
+                  return Carouselimage(
+                    imageUrl: imageUrl,
+                    index: index,
+                    movie: movie,
                   );
                 },
               ),
-            ),
-          ],
-        )
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.all(10.0)),
+                  Text(
+                    "Popular Movies",
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20.0),
+
+              SizedBox(
+                height: 400,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: moviesPopular.length,
+                  itemBuilder: (context, index) {
+                    final movie = moviesPopular[index];
+                    final posterPath = movie.posterPath;
+                    final imageUrl =
+                        'https://image.tmdb.org/t/p/w500$posterPath';
+                    return FilmCard(movie: movie, imageUrl: imageUrl);
+                  },
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.all(10.0)),
+                  Text(
+                    "Indonesian Most Binge Watch",
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.all(10.0)),
+                ],
+              ),
+
+              SizedBox(
+                height: 350,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: moviesRegion.length,
+                  itemBuilder: (context, index) {
+                    final movie = moviesRegion[index];
+                    final posterPath = movie.posterPath;
+                    final imageUrl =
+                        'https://image.tmdb.org/t/p/w500$posterPath';
+                    return FilmCard(movie: movie, imageUrl: imageUrl);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-
   void fetchData() async {
-    final response = await MovieApi.fetchData();
+    final responseFullMovie = await MovieApi.fetchDataPopularMovies();
+    final responseRegionMovie = await MovieApi.fetchDataRegionMovies(
+      language: "ID",
+    );
     setState(() {
-      movies = response;
+      moviesPopular = responseFullMovie;
+      moviesRegion = responseRegionMovie;
     });
   }
 }

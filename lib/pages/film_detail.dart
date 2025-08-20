@@ -15,7 +15,10 @@ class FilmDetail extends StatelessWidget {
           builder: (BuildContext context) {
             return IconButton(
               icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () { Navigator.pop(context); },
+
+              onPressed: () {
+                Navigator.pop(context);
+              },
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
           },
