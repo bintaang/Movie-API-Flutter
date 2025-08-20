@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:movie_app_flutter/models/movie_genre.dart';
 import 'package:movie_app_flutter/models/movies.dart';
 
 const url = 'https://api.themoviedb.org/3/discover/movie';
@@ -52,5 +53,21 @@ class MovieApi {
       );
     }).toList();
     return movies;
+  }
+
+  static Future<List<Genres>> fetchGenres() async {
+    final url = 'https://api.themoviedb.org/3/genre/movie/list?language=en';
+    final uri = Uri.parse(url);
+    final response = await http.get(
+      uri,
+      headers: {'Authorization': bearerToken},
+    );
+    final body = response.body;
+    final json = jsonDecode(body);
+    final results = json['genres'] as List<dynamic>;
+    final genres = results.map((e) {
+      return Genres(name: e['name'], id: e['id'].toString());
+    }).toList();
+    return genres;
   }
 }
