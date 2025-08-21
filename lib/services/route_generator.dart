@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app_flutter/main.dart';
 import 'package:movie_app_flutter/models/movies.dart';
 import 'package:movie_app_flutter/pages/film_detail.dart';
+import 'package:movie_app_flutter/pages/genre_page.dart';
 import 'package:movie_app_flutter/pages/home.dart';
 
 class RouteGenerator {
@@ -19,6 +20,12 @@ class RouteGenerator {
         return _errorRoute();
       case '/home':
         return MaterialPageRoute(builder: (_) => Home());
+      case '/genres':
+        if (args is int) {
+          return MaterialPageRoute(builder: (_) => GenrePage(id: args));
+        }
+        return _errorRoute();
+
       default:
         return _errorRoute();
     }

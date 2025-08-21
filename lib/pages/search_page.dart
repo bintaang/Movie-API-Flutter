@@ -20,7 +20,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
@@ -32,6 +31,18 @@ class _SearchPageState extends State<SearchPage> {
       ),
       child: Column(
         children: [
+          AppBar(
+            centerTitle: true,
+            title: Text(
+              "Search Your Desire Movies",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.right,
+            ),
+            backgroundColor: Colors.transparent,
+          ),
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: TextField(
@@ -62,15 +73,25 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: movieGenres.length,
                 itemBuilder: (context, index) {
                   final genre = movieGenres[index];
-                  return Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey.withAlpha(2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      genre.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(
+                        context,
+                      ).pushNamed('/genres', arguments: genre.id);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.withAlpha(50),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        genre.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   );
                 },

@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_app_flutter/services/movie_api.dart';
-import 'package:movie_app_flutter/widgets/carouselImage.dart';
 
 import '../models/movies.dart';
+import '../widgets/carousel_image.dart';
 import '../widgets/film_card.dart';
 
 class Home extends StatefulWidget {
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
               CarouselSlider.builder(
                 itemCount: moviesPopular.length,
                 options: CarouselOptions(
-                  height: 650,
+                  height: 500,
                   autoPlayCurve: Curves.fastOutSlowIn,
                   autoPlay: true,
                   enlargeCenterPage: true,
@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
                   final movie = moviesPopular[index];
                   final imagePath = movie.posterPath;
                   final imageUrl = 'https://image.tmdb.org/t/p/w500$imagePath,';
-                  return Carouselimage(
+                  return CarouselImage(
                     imageUrl: imageUrl,
                     index: index,
                     movie: movie,
@@ -104,7 +104,9 @@ class _HomeState extends State<Home> {
                     final posterPath = movie.posterPath;
                     final imageUrl =
                         'https://image.tmdb.org/t/p/w500$posterPath';
-                    return FilmCard(movie: movie, imageUrl: imageUrl);
+                    return Expanded(
+                      child: FilmCard(movie: movie, imageUrl: imageUrl),
+                    );
                   },
                 ),
               ),
@@ -126,7 +128,7 @@ class _HomeState extends State<Home> {
               ),
 
               SizedBox(
-                height: 350,
+                height: 400,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: moviesRegion.length,
@@ -135,7 +137,9 @@ class _HomeState extends State<Home> {
                     final posterPath = movie.posterPath;
                     final imageUrl =
                         'https://image.tmdb.org/t/p/w500$posterPath';
-                    return FilmCard(movie: movie, imageUrl: imageUrl);
+                    return Expanded(
+                      child: FilmCard(movie: movie, imageUrl: imageUrl),
+                    );
                   },
                 ),
               ),

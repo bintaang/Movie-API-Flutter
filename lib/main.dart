@@ -6,7 +6,11 @@ import 'package:movie_app_flutter/services/route_generator.dart';
 import 'package:movie_app_flutter/widgets/bottom_navbar.dart';
 
 void main() => runApp(
-  MaterialApp(initialRoute: '/', onGenerateRoute: RouteGenerator.generateRoute),
+  MaterialApp(
+    initialRoute: '/',
+    onGenerateRoute: RouteGenerator.generateRoute,
+    debugShowCheckedModeBanner: false,
+  ),
 );
 
 class MainPage extends StatefulWidget {
